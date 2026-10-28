@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+:root {
+  /* Buộc các control native (select, option, input date...) luôn render theo theme sáng,
+     tránh lỗi dropdown hiển thị chữ trắng/nền trắng không đọc được trên máy đang bật
+     dark mode ở Windows/Chrome. */
+  color-scheme: light;
+}
+
+@keyframes slide-in {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+.animate-slide-in {
+  animation: slide-in 0.25s ease-out;
+}
