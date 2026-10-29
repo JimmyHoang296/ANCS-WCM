@@ -2,7 +2,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import SearchStore from "./pages/searchStore/SearchStore";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
-import ViolationManager from "./pages/violation/ViolationManager";
 import VisitPlanManager from "./pages/visitPlan/VisitPlanManager";
 import AdminPage from "./pages/admin/AdminPage";
 import ChecklistManager from "./pages/checklist/ChecklistManager";
@@ -30,7 +29,6 @@ const App = () => {
                 <Route path="/" element={<Navigate to="/search" replace />} />
                 <Route path="/search" element={<SearchStore />} />
                 <Route path="/checklist" element={<ChecklistManager />} />
-                <Route path="/violation-management" element={<ViolationManager />} />
                 <Route path="/visit-plan-management" element={<VisitPlanManager />} />
                 {isAdmin && <Route path="/admin" element={<AdminPage />} />}
                 <Route path="*" element={<Navigate to="/search" replace />} />

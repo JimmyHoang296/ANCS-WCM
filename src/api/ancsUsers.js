@@ -8,7 +8,7 @@ export const TITLES = {
   chuyen_vien: 'Chuyên viên an ninh',
 };
 
-// Map chức danh sang role mà các trang Ghi nhận / Lịch BM đang dùng.
+// Map chức danh sang role mà các trang Tìm kiếm / Đăng ký lấy dữ liệu đang dùng.
 export const roleOf = (title) => (title === 'chuyen_vien' ? 'emp' : 'hod');
 
 // Hash = SHA-256("salt:password"). Chỉ ngăn lộ mật khẩu thô trong DB; đăng nhập vẫn

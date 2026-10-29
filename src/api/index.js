@@ -1,16 +1,5 @@
 import { supabase } from './supabaseClient';
 import { USER_TABLE, findAncsUser, roleOf, verifyLogin } from './ancsUsers';
-import { URL as MAIN_URL } from '../assets/variables';
-
-// GAS fetch — kept only for features that need Google services (doc gen).
-async function gasFetch(type, data, url = MAIN_URL) {
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ type, data }),
-  });
-  return response.json();
-}
 
 // ───────────────────────── helpers ──────────────────────────────────────────
 
@@ -91,16 +80,6 @@ function fetchColumn(table, col) {
   return fetchAllRows(() => supabase.from(table).select(col));
 }
 
-async function nextInspectionId() {
-  const rows = await fetchColumn('inspections', 'id');
-  let max = 0;
-  rows.forEach((r) => {
-    const n = parseInt(String(r.id).replace(/^SV/i, ''), 10);
-    if (!isNaN(n) && n > max) max = n;
-  });
-  return 'SV' + String(max + 1).padStart(5, '0');
-}
-
 async function nextVisitPlanId() {
   const rows = await fetchColumn('visit_plan', 'id');
   let max = 0;
@@ -117,8 +96,6 @@ async function getData(u) {
   const user = {
     id: u.username, name: u.full_name, title: u.title, role: roleOf(u.title),
     manager: u.manager, isAdmin: u.title !== 'chuyen_vien',
-    // Trưởng phòng xem toàn bộ ghi nhận
-    leadGhiNhan: u.title === 'truong_phong',
   };
   const today = bangkokToday();
 
@@ -129,31 +106,11 @@ async function getData(u) {
     emps = (data || []).map((r) => r.full_name).filter(Boolean);
   }
 
-  const makeInspections = () => {
-    let q = supabase.from('inspections').select('*');
-    if (user.title === 'chuyen_vien') q = q.ilike('kstt', user.name);
-    else if (user.title === 'truong_bo_phan') q = q.in('kstt', [...new Set([user.name, ...emps])]);
-    return q;
-  };
+  const visitPlan = await fetchAllRows(() =>
+    supabase.from('visit_plan').select('*').ilike('user', user.id).gte('date', today)
+  );
 
-  const [inspections, visitPlan, setupRes, nhomRes] = await Promise.all([
-    fetchAllRows(makeInspections),
-    fetchAllRows(() => supabase.from('visit_plan').select('*').ilike('user', user.id).gte('date', today)),
-    supabase.from('setup').select('list,value,pos').order('pos'),
-    supabase.from('nhom_ghi_nhan').select('*').order('STT'),
-  ]);
-
-  const setup = { audits: [], types: [], groups: [], penalties: [] };
-  (setupRes.data || []).forEach((r) => {
-    if (setup[r.list]) setup[r.list].push(r.value);
-  });
-
-  const nhomGhiNhan = (nhomRes.data || []).map((r) => ({
-    nhom: r['Nhóm hành vi'],
-    hanhVi: r['Hành vi'],
-  }));
-
-  return { user, inspections, visitPlan, emps, setup: { ...setup, nhomGhiNhan } };
+  return { user, visitPlan, emps };
 }
 
 // ───────────────────────── public API ────────────────────────────────────────
@@ -174,56 +131,7 @@ export const api = {
 
   // ---- Cases (TaskManager) ----
   // ---- Inspections ----
-  createInspection: async (data) => {
-    const id = await nextInspectionId();
-    const row = { ...sanitize(data, INSPECTION_CFG), id };
-    const { error } = await supabase.from('inspections').insert(row);
-    return error ? { success: false, message: error.message } : { success: true, data: id };
-  },
-  updateInspection: async (data) => {
-    const { error } = await supabase
-      .from('inspections')
-      .update(sanitize(data, INSPECTION_CFG))
-      .eq('id', data.id);
-    return error ? { success: false, message: error.message } : { success: true };
-  },
-  deleteInspection: async (id) => {
-    const { error } = await supabase.from('inspections').delete().eq('id', id);
-    return error ? { success: false, message: error.message } : { success: true };
-  },
-
   // ---- Violation items ----
-  getViolationsByInspection: async (inspectionId) => {
-    const { data, error } = await supabase
-      .from('violations')
-      .select('*')
-      .eq('inspection_id', inspectionId)
-      .order('id');
-    if (error) return { success: false, message: error.message };
-    return { success: true, data: data || [] };
-  },
-  createViolationItem: async (data) => {
-    const row = sanitize(data, VIOLATION_ITEM_CFG);
-    delete row.id;
-    const { data: inserted, error } = await supabase
-      .from('violations')
-      .insert(row)
-      .select('id')
-      .single();
-    return error ? { success: false, message: error.message } : { success: true, data: inserted.id };
-  },
-  updateViolationItem: async (data) => {
-    const row = sanitize(data, VIOLATION_ITEM_CFG);
-    const { error } = await supabase.from('violations').update(row).eq('id', data.id);
-    return error ? { success: false, message: error.message } : { success: true };
-  },
-  deleteViolationItem: async (id) => {
-    const { error } = await supabase.from('violations').delete().eq('id', id);
-    return error ? { success: false, message: error.message } : { success: true };
-  },
-
-  // ---- Violation Report (inspections + violations joined) ----
-
   // ---- TH XLVP records linked to a case (sự vụ) ----
   // ---- Admin: app_user ----
   // ---- Admin: nhom_loi ----
@@ -248,10 +156,7 @@ export const api = {
   },
 
   // Word-doc generation still runs on Google Apps Script (Docs template in Drive).
-  createRecord: (data) => gasFetch('createRecord', data),
   // Fire-and-forget Telegram notification after creating a new inspection.
-  notify: (data) => gasFetch('notify', data),
-
   // ---- Visit Plans ----
   createVisitPlan: async (data) => {
     const id = await nextVisitPlanId();

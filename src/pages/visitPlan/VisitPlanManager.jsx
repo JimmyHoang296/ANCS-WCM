@@ -131,7 +131,7 @@ const VisitPlanManager = () => {
     <div className="bg-white rounded-xl shadow-sm border border-gray-100">
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-        <h2 className="text-xl font-bold text-gray-900">Đăng ký đổ dữ liệu</h2>
+        <h2 className="text-xl font-bold text-gray-900">Đăng ký lấy dữ liệu</h2>
         <button
           onClick={() => openModal({ date: getTodayDateString(), site: '', path: '', status: 'pending' })}
           className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"

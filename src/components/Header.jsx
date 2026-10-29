@@ -5,10 +5,9 @@ import useStore from '../store/useStore';
 
 const PAGE_TITLES = {
   '/search':                'Tìm kiếm',
-  '/checklist':             'Checklist ANAT & PCCC',
-  '/violation-management':  'Ghi nhận vi phạm',
+  '/checklist':             'Checklist ANCS',
   '/admin':                 'Quản trị tài khoản',
-  '/visit-plan-management': 'Lịch BM',
+  '/visit-plan-management': 'Đăng ký lấy dữ liệu',
 };
 
 const Header = () => {

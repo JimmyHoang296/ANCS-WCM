@@ -1,13 +1,12 @@
-import { ChevronLeft, ClipboardCheck, DownloadCloud, Menu, Search, Settings, Store, User } from "lucide-react";
+import { ChevronLeft, ClipboardCheck, Menu, Search, Settings, Store, User } from "lucide-react";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import useStore from "../store/useStore";
 
 const baseNavItems = [
   { name: "Tìm kiếm", icon: <Search size={20} />, page: "/search" },
-  { name: "Checklist", icon: <ClipboardCheck size={20} />, page: "/checklist" },
-  { name: "Ghi nhận", icon: <DownloadCloud size={20} />, page: "/violation-management" },
-  { name: "Lịch BM", icon: <Store size={20} />, page: "/visit-plan-management" },
+  { name: "Checklist ANCS", icon: <ClipboardCheck size={20} />, page: "/checklist" },
+  { name: "Đăng ký lấy dữ liệu", icon: <Store size={20} />, page: "/visit-plan-management" },
 ];
 
 const Sidebar = () => {

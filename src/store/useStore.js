@@ -4,10 +4,8 @@ import { api } from '../api';
 
 const emptyData = {
   user: {},
-  inspections: [],
   visitPlan: [],
   emps: [],
-  setup: {},
 };
 
 const useStore = create(

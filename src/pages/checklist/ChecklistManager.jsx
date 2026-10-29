@@ -64,7 +64,7 @@ const ChecklistManager = () => {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100">
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-        <h2 className="text-xl font-bold text-gray-900">Checklist ANAT & PCCC</h2>
+        <h2 className="text-xl font-bold text-gray-900">Checklist ANCS</h2>
         <button onClick={() => setModal({ open: true, record: null })}
           className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
           <Plus className="w-4 h-4" /> Checklist mới

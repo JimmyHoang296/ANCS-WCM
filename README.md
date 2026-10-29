@@ -1,6 +1,6 @@
 # ANCS Manager
 
-Ứng dụng React + Vite (Supabase) gồm 3 tính năng: Tìm kiếm cửa hàng (`/search`), Lịch BM (`/visit-plan-management`), Ghi nhận vi phạm (`/violation-management`).
+Ứng dụng React + Vite (Supabase) gồm: Tìm kiếm cửa hàng (`/search`), Checklist ANCS (`/checklist`), Đăng ký lấy dữ liệu (`/visit-plan-management`) và trang Quản trị tài khoản (`/admin`).
 
 ## Chạy local
 ```

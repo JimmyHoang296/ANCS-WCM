@@ -95,7 +95,7 @@ const AdminPage = () => {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <input name="username" value={form.username} onChange={handleChange} placeholder="Tên đăng nhập" className={INPUT} autoComplete="off" />
-          <input name="fullName" value={form.fullName} onChange={handleChange} placeholder="Họ tên (trùng tên KSTT trong ghi nhận)" className={INPUT} />
+          <input name="fullName" value={form.fullName} onChange={handleChange} placeholder="Họ tên" className={INPUT} />
           <input name="password" type="password" value={form.password} onChange={handleChange} placeholder="Mật khẩu ban đầu" className={INPUT} autoComplete="new-password" />
           {isTruongPhong && (
             <select name="title" value={form.title} onChange={handleChange} className={INPUT}>

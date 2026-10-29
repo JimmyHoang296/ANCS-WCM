@@ -97,7 +97,7 @@ const ChecklistFormModal = ({ record, onClose, onSaved, onDeleted }) => {
       <div className="bg-white w-full max-w-3xl sm:rounded-xl shadow-xl">
         <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-3 bg-white border-b sm:rounded-t-xl">
           <h3 className="font-semibold text-gray-800">
-            {isNew ? "Checklist ANAT & PCCC mới" : `Checklist #${record.id}`}
+            {isNew ? "Checklist ANCS mới" : `Checklist #${record.id}`}
             {!canEdit && <span className="ml-2 text-xs font-normal text-gray-400 italic">Chỉ xem</span>}
           </h3>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500"><X size={18} /></button>
