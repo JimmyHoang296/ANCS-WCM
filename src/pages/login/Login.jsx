@@ -32,7 +32,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-red-50 p-4">
+    <div className="min-h-dvh flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-red-50 p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden">
         <div className="bg-red-800 px-8 py-6 text-center">
           <h1 className="text-2xl font-bold text-white tracking-wide">ANCS</h1>

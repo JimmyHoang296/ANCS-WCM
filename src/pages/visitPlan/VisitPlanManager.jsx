@@ -130,24 +130,24 @@ const VisitPlanManager = () => {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-        <h2 className="text-xl font-bold text-gray-900">Đăng ký lấy dữ liệu</h2>
+      <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900">Đăng ký lấy dữ liệu</h2>
         <button
           onClick={() => openModal({ date: getTodayDateString(), site: '', path: '', status: 'pending' })}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+          className="inline-flex shrink-0 items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
         >
           <Plus className="w-4 h-4" /> Kế hoạch mới
         </button>
       </div>
 
       {/* Search */}
-      <div className="px-6 py-4 border-b border-gray-100 bg-gray-50">
+      <div className="px-4 sm:px-6 py-4 border-b border-gray-100 bg-gray-50">
         <div className="flex flex-wrap gap-3 items-end">
           <div className="flex-1 min-w-[160px]">
             <label className="block text-xs font-medium text-gray-500 mb-1">Site</label>
             <input name="site" value={searchQuery.site} onChange={handleSearchChange} placeholder="Tìm theo site..." className={INPUT} />
           </div>
-          <div className="w-44">
+          <div className="w-full sm:w-44">
             <label className="block text-xs font-medium text-gray-500 mb-1">Trạng thái</label>
             <input name="status" value={searchQuery.status} onChange={handleSearchChange} placeholder="Tìm theo trạng thái..." className={INPUT} />
           </div>
@@ -158,7 +158,7 @@ const VisitPlanManager = () => {
       </div>
 
       {/* Result count */}
-      <div className="px-6 pt-3 pb-1">
+      <div className="px-4 sm:px-6 pt-3 pb-1">
         <p className="text-xs text-gray-400">
           Hiển thị <span className="font-medium text-gray-600">{paginatedPlans.length}</span> / <span className="font-medium text-gray-600">{filteredItems.length}</span> kế hoạch
         </p>
@@ -211,7 +211,7 @@ const VisitPlanManager = () => {
                     <p className="text-sm font-medium text-gray-800">{plan.site}</p>
                     <p className="text-xs text-gray-500 mt-0.5">{plan.path}</p>
                   </div>
-                  <button onClick={() => openModal(plan)} className="shrink-0 p-1.5 rounded-lg text-indigo-600 hover:bg-indigo-50">
+                  <button onClick={() => openModal(plan)} className="shrink-0 p-2.5 rounded-lg text-indigo-600 hover:bg-indigo-50">
                     <Eye className="w-4 h-4" />
                   </button>
                 </div>
@@ -223,7 +223,7 @@ const VisitPlanManager = () => {
             ))}
           </div>
 
-          <div className="px-6 pb-4">
+          <div className="px-4 sm:px-6 pb-4">
             <Pagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
           </div>
         </>

@@ -7,7 +7,7 @@ export const Toast = () => {
   const removeToast = useStore((state) => state.removeToast);
 
   return (
-    <div className="fixed bottom-4 right-4 z-[100] flex flex-col gap-2">
+    <div className="fixed bottom-4 left-4 right-4 sm:left-auto z-[100] flex flex-col gap-2 items-stretch sm:items-end">
       {toasts.map((toast) => (
         <ToastItem key={toast.id} toast={toast} onRemove={removeToast} />
       ))}
@@ -24,7 +24,7 @@ const ToastItem = ({ toast, onRemove }) => {
   const isError = toast.type === 'error';
 
   return (
-    <div className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white text-sm min-w-64 max-w-sm animate-slide-in ${isError ? 'bg-red-500' : 'bg-green-500'}`}>
+    <div className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white text-sm sm:min-w-64 sm:max-w-sm animate-slide-in ${isError ? 'bg-red-500' : 'bg-green-500'}`}>
       {isError ? <XCircle className="w-5 h-5 flex-shrink-0" /> : <CheckCircle className="w-5 h-5 flex-shrink-0" />}
       <span className="flex-1">{toast.message}</span>
       <button onClick={() => onRemove(toast.id)} className="flex-shrink-0 hover:opacity-70">

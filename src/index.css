@@ -14,3 +14,14 @@
 .animate-slide-in {
   animation: slide-in 0.25s ease-out;
 }
+
+/* Điện thoại: chữ ô nhập >= 16px để iOS không tự phóng to khi focus. */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+html { -webkit-tap-highlight-color: transparent; }

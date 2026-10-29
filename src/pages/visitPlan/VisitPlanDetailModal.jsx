@@ -17,8 +17,8 @@ const VisitPlanDetailModal = ({ plan, onClose, onSave, onUpdate, onDelete }) => 
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-2xl">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end sm:items-center justify-center sm:p-4 z-50">
+      <div className="bg-white rounded-t-xl sm:rounded-xl shadow-lg p-5 sm:p-6 w-full max-w-2xl max-h-[92dvh] overflow-y-auto overscroll-contain pb-[max(1.25rem,env(safe-area-inset-bottom))]">
         {/* Header */}
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h3 className="text-xl font-bold">
@@ -26,7 +26,7 @@ const VisitPlanDetailModal = ({ plan, onClose, onSave, onUpdate, onDelete }) => 
           </h3>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-800 text-3xl"
+            className="px-2 text-gray-500 hover:text-gray-800 text-3xl leading-none"
           >
             &times;
           </button>
@@ -63,7 +63,7 @@ const VisitPlanDetailModal = ({ plan, onClose, onSave, onUpdate, onDelete }) => 
         </div>
 
         {/* Footer */}
-        <div className="flex gap-3">
+        <div className="flex gap-3 [&>button]:flex-1 [&>button]:justify-center [&>button]:py-3 sm:[&>button]:flex-none sm:[&>button]:py-2">
           <button
             onClick={handleSave}
             className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 flex items-center"

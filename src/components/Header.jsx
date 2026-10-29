@@ -38,15 +38,15 @@ const Header = () => {
       {/* Hamburger — mobile only */}
       <button
         onClick={toggleSidebar}
-        className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 lg:hidden"
+        className="p-2.5 rounded-lg hover:bg-gray-100 text-gray-600 lg:hidden"
         aria-label="Toggle menu"
       >
         <Menu className="w-5 h-5" />
       </button>
 
       {/* App title — mobile center */}
-      <span className="text-lg font-bold text-red-800 lg:hidden absolute left-1/2 -translate-x-1/2">
-        ANCS
+      <span className="flex-1 min-w-0 truncate px-2 text-base font-bold text-red-800 lg:hidden">
+        {pageTitle}
       </span>
 
       <span className="hidden lg:block text-base font-semibold text-gray-700">
@@ -59,7 +59,7 @@ const Header = () => {
         <button
           onClick={handleRefresh}
           disabled={isRefreshing}
-          className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-2.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
           title="Cập nhật dữ liệu"
         >
           <RefreshCw
@@ -78,7 +78,7 @@ const Header = () => {
         {/* Logout */}
         <button
           onClick={logout}
-          className="p-2 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500"
+          className="p-2.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500"
           title="Đăng xuất"
         >
           <LogOut className="w-5 h-5" />

@@ -86,7 +86,7 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="p-3 sm:p-5 space-y-5 max-w-5xl">
+    <div className="p-2 sm:p-5 space-y-4 sm:space-y-5 max-w-5xl">
       {loading && <LoadingModal />}
 
       <form onSubmit={handleCreate} className="bg-white rounded-xl shadow-sm p-4 space-y-3">
@@ -111,12 +111,12 @@ const AdminPage = () => {
             </select>
           )}
         </div>
-        <button type="submit" className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
+        <button type="submit" className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-4 py-3 sm:py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
           <Plus size={16} /> Tạo tài khoản
         </button>
       </form>
 
-      <div className="bg-white rounded-xl shadow-sm overflow-x-auto">
+      <div className="hidden md:block bg-white rounded-xl shadow-sm overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead className="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase">
             <tr>
@@ -139,11 +139,11 @@ const AdminPage = () => {
                 <td className="px-4 py-2.5">
                   {canManage(u) && (
                     <div className="flex justify-end gap-1">
-                      <button onClick={() => handleReset(u)} title="Đặt lại mật khẩu" className="p-1.5 rounded-lg text-indigo-600 hover:bg-indigo-50">
+                      <button onClick={() => handleReset(u)} title="Đặt lại mật khẩu" className="p-2 rounded-lg text-indigo-600 hover:bg-indigo-50">
                         <KeyRound size={16} />
                       </button>
                       <button onClick={() => toggleActive(u)} title={u.active ? "Khóa" : "Mở khóa"}
-                        className={`p-1.5 rounded-lg ${u.active ? "text-red-500 hover:bg-red-50" : "text-green-600 hover:bg-green-50"}`}>
+                        className={`p-2 rounded-lg ${u.active ? "text-red-500 hover:bg-red-50" : "text-green-600 hover:bg-green-50"}`}>
                         {u.active ? <UserX size={16} /> : <UserCheck size={16} />}
                       </button>
                     </div>
@@ -156,6 +156,30 @@ const AdminPage = () => {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Điện thoại: dạng thẻ */}
+      <div className="md:hidden bg-white rounded-xl shadow-sm divide-y divide-gray-100">
+        {visible.map((u) => (
+          <div key={u.username} className={`px-4 py-3 flex items-center justify-between gap-3 ${u.active ? "" : "bg-gray-50 text-gray-400"}`}>
+            <div className="min-w-0">
+              <p className="text-sm font-medium truncate">{u.full_name} <span className="font-mono text-xs text-gray-400">({u.username})</span></p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                {TITLES[u.title]}{u.manager ? ` · ${nameOf(u.manager)}` : ""}{u.active ? "" : " · Đã khóa"}
+              </p>
+            </div>
+            {canManage(u) && (
+              <div className="shrink-0 flex gap-1">
+                <button onClick={() => handleReset(u)} title="Đặt lại mật khẩu" className="p-2.5 rounded-lg text-indigo-600 hover:bg-indigo-50"><KeyRound size={18} /></button>
+                <button onClick={() => toggleActive(u)} title={u.active ? "Khóa" : "Mở khóa"}
+                  className={`p-2.5 rounded-lg ${u.active ? "text-red-500 hover:bg-red-50" : "text-green-600 hover:bg-green-50"}`}>
+                  {u.active ? <UserX size={18} /> : <UserCheck size={18} />}
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+        {visible.length === 0 && <p className="px-4 py-6 text-center text-sm text-gray-400">Chưa có tài khoản</p>}
       </div>
     </div>
   );

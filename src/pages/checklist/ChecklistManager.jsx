@@ -63,22 +63,22 @@ const ChecklistManager = () => {
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-        <h2 className="text-xl font-bold text-gray-900">Checklist ANCS</h2>
+      <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900">Checklist ANCS</h2>
         <button onClick={() => setModal({ open: true, record: null })}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
+          className="inline-flex shrink-0 items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
           <Plus className="w-4 h-4" /> Checklist mới
         </button>
       </div>
 
-      <div className="px-6 py-3 border-b border-gray-100 bg-gray-50 flex flex-wrap gap-3 items-end">
-        <div>
+      <div className="px-4 sm:px-6 py-3 border-b border-gray-100 bg-gray-50 flex flex-wrap gap-3 items-end">
+        <div className="flex-1 sm:flex-none min-w-[140px]">
           <label className="block text-xs font-medium text-gray-500 mb-1">Từ ngày</label>
-          <input type="date" name="dateFrom" value={range.dateFrom} onChange={setRangeField} className={INPUT} />
+          <input type="date" name="dateFrom" value={range.dateFrom} onChange={setRangeField} className={`${INPUT} w-full`} />
         </div>
-        <div>
+        <div className="flex-1 sm:flex-none min-w-[140px]">
           <label className="block text-xs font-medium text-gray-500 mb-1">Đến ngày</label>
-          <input type="date" name="dateTo" value={range.dateTo} onChange={setRangeField} className={INPUT} />
+          <input type="date" name="dateTo" value={range.dateTo} onChange={setRangeField} className={`${INPUT} w-full`} />
         </div>
         <div className="flex-1 min-w-[160px]">
           <label className="block text-xs font-medium text-gray-500 mb-1">Mã / tên CH</label>
@@ -92,7 +92,7 @@ const ChecklistManager = () => {
         )}
       </div>
 
-      <div className="px-6 pt-3 pb-1">
+      <div className="px-4 sm:px-6 pt-3 pb-1">
         <p className="text-xs text-gray-400">
           Hiển thị <span className="font-medium text-gray-600">{paged.length}</span> / <span className="font-medium text-gray-600">{filtered.length}</span> checklist
         </p>
@@ -105,7 +105,7 @@ const ChecklistManager = () => {
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto">
+          <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full">
               <thead className="bg-gray-50 border-y border-gray-100">
                 <tr>
@@ -142,7 +142,28 @@ const ChecklistManager = () => {
               </tbody>
             </table>
           </div>
-          <div className="px-6 pb-4">
+          {/* Điện thoại: dạng thẻ */}
+          <div className="md:hidden divide-y divide-gray-100">
+            {paged.map((r) => {
+              const faults = countFaults(r), photos = countPhotos(r);
+              return (
+                <button key={r.id} onClick={() => setModal({ open: true, record: r })}
+                  className="w-full text-left px-4 py-3.5 active:bg-gray-50 flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-gray-800 truncate">{r.sap}{r.store_name ? ` — ${r.store_name}` : ""}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{fmt(r.created_at)} · {r.cvan_name}</p>
+                  </div>
+                  <div className="shrink-0 flex flex-col items-end gap-1">
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${faults ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
+                      {faults ? `${faults} mục` : "Đạt"}
+                    </span>
+                    {photos > 0 && <span className="inline-flex items-center gap-1 text-xs text-gray-400"><Image size={12} />{photos}</span>}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          <div className="px-4 sm:px-6 pb-4">
             <Pagination totalPages={Math.ceil(filtered.length / PER_PAGE)} currentPage={page} setCurrentPage={setPage} />
           </div>
         </>

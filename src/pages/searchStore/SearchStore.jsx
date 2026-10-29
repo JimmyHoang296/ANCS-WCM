@@ -19,7 +19,7 @@ const TRANG_THAI_VIOLATION = {
 const InfoRow = ({ label, value }) =>
   value ? (
     <div className="flex items-start gap-1.5 text-sm">
-      <span className="text-gray-400 shrink-0 w-14 text-xs pt-0.5">{label}</span>
+      <span className="text-gray-400 shrink-0 w-20 sm:w-14 text-xs pt-0.5">{label}</span>
       <span className="text-gray-700">{value}</span>
     </div>
   ) : null;
@@ -279,12 +279,12 @@ const SearchStore = () => {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-100">
+      <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
         <h2 className="text-xl font-bold text-gray-900">Tìm kiếm cửa hàng</h2>
       </div>
 
       {/* Search inputs */}
-      <div className="px-6 py-4 border-b border-gray-100 bg-gray-50">
+      <div className="px-4 sm:px-6 py-4 border-b border-gray-100 bg-gray-50">
         <div className="flex flex-wrap gap-3 items-end">
           <div className="flex-1 min-w-[140px]">
             <label className="block text-xs font-medium text-gray-500 mb-1">Site</label>
@@ -300,7 +300,7 @@ const SearchStore = () => {
           </div>
           <button
             onClick={handleSearch}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+            className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-4 py-2.5 sm:py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
           >
             <Search className="w-4 h-4" /> Tìm kiếm
           </button>
@@ -309,7 +309,7 @@ const SearchStore = () => {
       </div>
 
       {/* Results */}
-      <div className="px-6 py-5">
+      <div className="px-4 sm:px-6 py-5">
         {searched && (
           <p className="text-xs text-gray-400 mb-4">
             Tìm thấy <span className="font-medium text-gray-600">{results.length}</span> cửa hàng
@@ -335,7 +335,7 @@ const SearchStore = () => {
                   </div>
                   <button
                     onClick={() => setHistoryShop(shop)}
-                    className="shrink-0 inline-flex items-center gap-1 px-2 py-1 text-xs bg-indigo-50 text-indigo-600 rounded-md hover:bg-indigo-100 transition-colors font-medium"
+                    className="shrink-0 inline-flex items-center gap-1 px-3 py-2 sm:px-2 sm:py-1 text-xs bg-indigo-50 text-indigo-600 rounded-md hover:bg-indigo-100 transition-colors font-medium"
                     title="Xem lịch sử ghi nhận & vi phạm"
                   >
                     <History size={12} /> Lịch sử
@@ -359,13 +359,13 @@ const SearchStore = () => {
                         <div className="flex gap-1.5">
                           <a
                             href={`tel:${shop.CHTPhone}`}
-                            className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-green-50 text-green-700 rounded-md hover:bg-green-100 transition-colors"
+                            className="inline-flex items-center gap-1 px-3 py-2 sm:px-2 sm:py-1 text-xs bg-green-50 text-green-700 rounded-md hover:bg-green-100 transition-colors"
                           >
                             <Phone className="w-3 h-3" /> Gọi
                           </a>
                           <a
                             href={`viber://chat?number=%2B84${String(shop.CHTPhone).replace(/^0/, '')}`}
-                            className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-purple-50 text-purple-700 rounded-md hover:bg-purple-100 transition-colors"
+                            className="inline-flex items-center gap-1 px-3 py-2 sm:px-2 sm:py-1 text-xs bg-purple-50 text-purple-700 rounded-md hover:bg-purple-100 transition-colors"
                           >
                             <MessageCircle className="w-3 h-3" /> Viber
                           </a>

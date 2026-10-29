@@ -93,14 +93,14 @@ const ChecklistFormModal = ({ record, onClose, onSaved, onDeleted }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 overflow-y-auto p-0 sm:p-6">
-      <div className="bg-white w-full max-w-3xl sm:rounded-xl shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 overflow-y-auto overscroll-contain p-0 sm:p-6">
+      <div className="bg-white w-full max-w-3xl min-h-dvh sm:min-h-0 sm:rounded-xl shadow-xl">
         <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-3 bg-white border-b sm:rounded-t-xl">
           <h3 className="font-semibold text-gray-800">
             {isNew ? "Checklist ANCS mới" : `Checklist #${record.id}`}
             {!canEdit && <span className="ml-2 text-xs font-normal text-gray-400 italic">Chỉ xem</span>}
           </h3>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500"><X size={18} /></button>
+          <button onClick={onClose} className="p-2.5 -mr-2 rounded-lg hover:bg-gray-100 text-gray-500"><X size={20} /></button>
         </div>
 
         <div className="p-5 space-y-6">
@@ -111,7 +111,7 @@ const ChecklistFormModal = ({ record, onClose, onSaved, onDeleted }) => {
                 <input value={form.sap ?? ""} onChange={(e) => set("sap", e.target.value)} disabled={!canEdit} className={INPUT} />
                 {canEdit && (
                   <button type="button" onClick={lookupStore} title="Tra cứu cửa hàng"
-                    className="px-3 rounded-lg border border-gray-200 text-indigo-600 hover:bg-indigo-50"><Search size={16} /></button>
+                    className="px-3.5 rounded-lg border border-gray-200 text-indigo-600 hover:bg-indigo-50"><Search size={18} /></button>
                 )}
               </div>
             </div>
@@ -146,13 +146,13 @@ const ChecklistFormModal = ({ record, onClose, onSaved, onDeleted }) => {
         </div>
 
         {canEdit && (
-          <div className="sticky bottom-0 flex items-center justify-between px-5 py-3 bg-white border-t sm:rounded-b-xl">
+          <div className="sticky bottom-0 flex items-center justify-between gap-3 px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-white border-t sm:rounded-b-xl">
             {!isNew ? (
-              <button onClick={handleDelete} className="inline-flex items-center gap-1.5 px-3 py-2 text-sm text-red-600 rounded-lg hover:bg-red-50">
+              <button onClick={handleDelete} className="inline-flex items-center gap-1.5 px-3 py-3 sm:py-2 text-sm text-red-600 rounded-lg hover:bg-red-50">
                 <Trash2 size={16} /> Xóa
               </button>
             ) : <span />}
-            <button onClick={handleSave} className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700">
+            <button onClick={handleSave} className="inline-flex flex-1 sm:flex-none justify-center items-center gap-2 px-4 py-3 sm:py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700">
               <Save size={16} /> Lưu
             </button>
           </div>

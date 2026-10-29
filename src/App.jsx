@@ -20,7 +20,7 @@ const App = () => {
       {!isLogin ? (
         <Login />
       ) : (
-        <div className="flex min-h-screen bg-gray-100 font-sans">
+        <div className="flex min-h-dvh bg-gray-100 font-sans">
           <Sidebar />
           <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? "lg:ml-64" : "lg:ml-16"}`}>
             <Header />

@@ -31,8 +31,8 @@ const PhotoField = ({ value = [], onChange, max = 3, disabled, onError }) => {
           </a>
           {!disabled && (
             <button type="button" onClick={() => onChange(value.filter((u) => u !== url))}
-              className="absolute top-0.5 right-0.5 p-0.5 rounded-full bg-black/60 text-white" title="Bỏ ảnh">
-              <X size={12} />
+              className="absolute top-0.5 right-0.5 p-1.5 rounded-full bg-black/60 text-white" title="Bỏ ảnh">
+              <X size={14} />
             </button>
           )}
         </div>
