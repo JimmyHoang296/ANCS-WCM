@@ -1,10 +1,11 @@
-import { ChevronLeft, DownloadCloud, Menu, Search, Store, User } from "lucide-react";
+import { ChevronLeft, ClipboardCheck, DownloadCloud, Menu, Search, Settings, Store, User } from "lucide-react";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import useStore from "../store/useStore";
 
-const navItems = [
+const baseNavItems = [
   { name: "Tìm kiếm", icon: <Search size={20} />, page: "/search" },
+  { name: "Checklist", icon: <ClipboardCheck size={20} />, page: "/checklist" },
   { name: "Ghi nhận", icon: <DownloadCloud size={20} />, page: "/violation-management" },
   { name: "Lịch BM", icon: <Store size={20} />, page: "/visit-plan-management" },
 ];
@@ -14,6 +15,10 @@ const Sidebar = () => {
   const isSidebarOpen = useStore((state) => state.isSidebarOpen);
   const toggleSidebar = useStore((state) => state.toggleSidebar);
   const location = useLocation();
+
+  const navItems = user?.isAdmin
+    ? [...baseNavItems, { name: "Quản trị", icon: <Settings size={20} />, page: "/admin" }]
+    : baseNavItems;
 
   // On mobile, close sidebar after navigating
   const handleNavClick = () => {

@@ -4,10 +4,8 @@ import { api } from '../api';
 
 const emptyData = {
   user: {},
-  cases: [],
   inspections: [],
   visitPlan: [],
-  calendar: [],
   emps: [],
   setup: {},
 };

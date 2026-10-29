@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { ChevronDown, ChevronUp, ChevronsUpDown, Eye, FileText, Plus } from "lucide-react";
-import { api } from "../../api";
 import { useManagerPage } from "../../hooks/useManagerPage";
 import useStore from "../../store/useStore";
 import Pagination from "../../components/Pagination";
@@ -40,7 +39,6 @@ const SortIcon = ({ field, sortField, sortDir }) => {
 const ViolationManager = () => {
   const data     = useStore((state) => state.data);
   const setData  = useStore((state) => state.setData);
-  const addToast = useStore((state) => state.addToast);
   const refreshKey = useStore((state) => state.refreshKey);
 
   const { role, name: userName } = data.user || {};
@@ -51,7 +49,7 @@ const ViolationManager = () => {
     searchQuery, setSearchQuery, filteredItems,
     currentPage, setCurrentPage,
     isModalOpen, selectedItem: selectedInspection,
-    loading, setLoading,
+    loading,
     handleSearchChange, resetSearch,
     openModal, closeModal,
   } = useManagerPage({
