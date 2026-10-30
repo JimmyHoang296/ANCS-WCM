@@ -42,7 +42,8 @@ const VIOLATION_ITEM_CFG = {
 };
 
 const VISITPLAN_CFG = {
-  cols: ['id', 'date', 'site', 'path', 'status', 'user'],
+  // `loai_ch` là cột generated trong DB (siêu thị / cửa hàng) nên không ghi từ client.
+  cols: ['id', 'date', 'site', 'path', 'status', 'user', 'chuc_vu'],
   dates: ['date'],
 };
 

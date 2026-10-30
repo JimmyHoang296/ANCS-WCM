@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import * as XLSX from "xlsx";
 import { BarChart2, ChevronDown, ChevronRight, Download, FileText, Search, X } from "lucide-react";
 import { checklistApi } from "../../api/checklist";
 import { listUsers } from "../../api/ancsUsers";
@@ -63,23 +64,70 @@ const SECTION_SHORT = {
   "Bảo vệ": "Bảo vệ",
 };
 
-// ─── XLSX/CSV export (CSV + BOM để Excel đọc đúng tiếng Việt) ─────────────────
-function downloadCsv(rows, start, end) {
-  const head = ["Ngày KT", "Mã CH", "Tên CH", "CVAN", "Chức danh", "Nhóm", "Hạng mục", "Kết quả"];
-  const lines = [head];
+// ─── XLSX export ──────────────────────────────────────────────────────────────
+// Sheet 1: thống kê theo nhóm lỗi (số CH mắc lỗi + danh sách mã CH). Sheet 2: dữ liệu chi tiết.
+function buildFaultSummary(rows) {
+  const by = new Map();
+  rows.forEach((r) => r._faults.forEach((f) => {
+    const k = `${f.section}||${f.label}`;
+    if (!by.has(k)) by.set(k, { section: f.section, label: f.label, luot: 0, stores: new Set() });
+    const e = by.get(k);
+    e.luot++;
+    if (r.sap) e.stores.add(r.sap);
+  }));
+  const order = SECTIONS.map((s) => s.title);
+  return [...by.values()]
+    .sort((a, b) => order.indexOf(a.section) - order.indexOf(b.section) || b.stores.size - a.stores.size)
+    .map((e) => ({
+      "Nhóm lỗi": e.section,
+      "Hạng mục lỗi": e.label,
+      "Số lượt": e.luot,
+      "Số CH mắc lỗi": e.stores.size,
+      "Danh sách mã CH": [...e.stores].sort().join(", "),
+    }));
+}
+
+function buildDetail(rows) {
+  const out = [];
   rows.forEach((r) => {
-    const base = [fmtTime(r.created_at), r.sap, r.store_name, r.cvan_name, r.inspector_title];
-    const fl = r._faults;
-    if (!fl.length) lines.push([...base, "", "", "Đạt"]);
-    else fl.forEach((f) => lines.push([...base, f.section, f.label, f.value]));
+    const { notes, photos } = notesOf(r);
+    const base = {
+      "Thời gian": fmtTime(r.created_at),
+      "Mã CH": r.sap,
+      "Tên CH": r.store_name || "",
+      "CVAN": r.cvan_name || "",
+      "Chức danh": r.inspector_title || "",
+    };
+    const tail = {
+      "Ghi chú": notes.map((n) => n.value).join(" | "),
+      "Link ảnh": photos.join("\n"),
+    };
+    if (!r._faults.length) out.push({ ...base, "Nhóm lỗi": "", "Hạng mục": "", "Kết quả": "Đạt", ...tail });
+    else r._faults.forEach((f, i) => out.push({
+      ...base, "Nhóm lỗi": f.section, "Hạng mục": f.label, "Kết quả": f.value,
+      // ghi chú/ảnh thuộc cả checklist nên chỉ ghi ở dòng đầu
+      ...(i === 0 ? tail : { "Ghi chú": "", "Link ảnh": "" }),
+    }));
   });
-  const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
-  const csv = "﻿" + lines.map((l) => l.map(esc).join(",")).join("\r\n");
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
-  a.download = `TongHopChecklistANCS_${start}_${end}.csv`;
-  a.click();
-  URL.revokeObjectURL(a.href);
+  return out;
+}
+
+function downloadXlsx(rows, start, end) {
+  const wb = XLSX.utils.book_new();
+
+  const ws1 = XLSX.utils.json_to_sheet(buildFaultSummary(rows), {
+    header: ["Nhóm lỗi", "Hạng mục lỗi", "Số lượt", "Số CH mắc lỗi", "Danh sách mã CH"],
+  });
+  ws1["!cols"] = [{ wch: 26 }, { wch: 60 }, { wch: 9 }, { wch: 14 }, { wch: 70 }];
+  XLSX.utils.book_append_sheet(wb, ws1, "Thống kê nhóm lỗi");
+
+  const ws2 = XLSX.utils.json_to_sheet(buildDetail(rows), {
+    header: ["Thời gian", "Mã CH", "Tên CH", "CVAN", "Chức danh", "Nhóm lỗi", "Hạng mục", "Kết quả", "Ghi chú", "Link ảnh"],
+  });
+  ws2["!cols"] = [{ wch: 16 }, { wch: 10 }, { wch: 28 }, { wch: 20 }, { wch: 24 }, { wch: 24 }, { wch: 60 }, { wch: 14 }, { wch: 40 }, { wch: 40 }];
+  XLSX.utils.book_append_sheet(wb, ws2, "Chi tiết");
+
+  XLSX.writeFile(wb, `TongHopChecklistANCS_${start}_${end}.xlsx`);
 }
 
 // ─── Components ───────────────────────────────────────────────────────────────
@@ -435,9 +483,9 @@ const ChecklistReport = () => {
             <option value="ok">Đạt toàn bộ</option>
           </select>
           {filtering && <span className="text-xs text-gray-400 whitespace-nowrap">{filtered.length}/{items.length}</span>}
-          <button onClick={() => downloadCsv(filtered, range.start, range.end)} disabled={filtered.length === 0}
+          <button onClick={() => downloadXlsx(filtered, range.start, range.end)} disabled={filtered.length === 0}
             className="sm:ml-auto w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2.5 sm:py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed">
-            <Download size={15} /> Tải CSV
+            <Download size={15} /> Tải XLSX
           </button>
         </div>
       </div>

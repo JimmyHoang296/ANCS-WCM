@@ -23,9 +23,26 @@ const StatusBadge = ({ status }) => {
   );
 };
 
+// Siêu thị: mã CH bắt đầu bằng 1; còn lại là cửa hàng (khớp cột generated loai_ch trong DB)
+const storeType = (site) => (String(site || '').trim().startsWith('1') ? 'Siêu thị' : 'Cửa hàng');
+const withType = (p) => ({ ...p, loai_ch: storeType(p.site) });
+
 const planFilterFn = (p, q) =>
   (!q.site   || p.site?.toLowerCase().includes(q.site.toLowerCase()))   &&
-  (!q.status || p.status?.toLowerCase().includes(q.status.toLowerCase()));
+  (!q.status || p.status?.toLowerCase().includes(q.status.toLowerCase())) &&
+  (!q.chucVu || (p.chuc_vu || 'KSTT') === q.chucVu) &&
+  (!q.loaiCh || (p.loai_ch || storeType(p.site)) === q.loaiCh);
+
+const Tag = ({ children, tone }) => (
+  <span className={`px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${tone}`}>{children}</span>
+);
+const ChucVuTag = ({ v }) => (
+  <Tag tone={v === 'ANCS' ? 'bg-indigo-100 text-indigo-700' : 'bg-amber-100 text-amber-700'}>{v || 'KSTT'}</Tag>
+);
+const LoaiTag = ({ plan }) => {
+  const v = plan.loai_ch || storeType(plan.site);
+  return <Tag tone={v === 'Siêu thị' ? 'bg-sky-100 text-sky-700' : 'bg-gray-100 text-gray-600'}>{v}</Tag>;
+};
 
 const SortIcon = ({ field, sortField, sortDir }) => {
   if (sortField !== field) return <ChevronsUpDown className="w-3 h-3 inline ml-1 opacity-40" />;
@@ -50,7 +67,7 @@ const VisitPlanManager = () => {
     openModal, closeModal,
   } = useManagerPage({
     initialItems: data.visitPlan || [],
-    initialSearch: { site: '', status: '' },
+    initialSearch: { site: '', status: '', chucVu: '', loaiCh: '' },
     filterFn: planFilterFn,
     refreshKey,
   });
@@ -80,6 +97,8 @@ const VisitPlanManager = () => {
   const COLS = [
     { label: 'Ngày',      field: 'date'   },
     { label: 'Site',      field: 'site'   },
+    { label: 'Chức vụ',   field: 'chuc_vu' },
+    { label: 'Loại CH',   field: 'loai_ch' },
     { label: 'Path',      field: 'path'   },
     { label: 'Trạng thái',field: 'status' },
   ];
@@ -93,13 +112,13 @@ const VisitPlanManager = () => {
     try {
       setLoading(true);
       if (sites.length === 1) {
-        const newPlan = { ...plan, site: sites[0], user: data.user.id };
+        const newPlan = { ...plan, site: sites[0], user: data.user.id, chuc_vu: 'ANCS' };
         const r = await api.createVisitPlan(newPlan);
-        if (r.success) { newPlan.id = r.data; setPlans((p) => [...p, newPlan]); closeModal(); addToast('Thêm kế hoạch thành công'); }
+        if (r.success) { newPlan.id = r.data; setPlans((p) => [...p, withType(newPlan)]); closeModal(); addToast('Thêm kế hoạch thành công'); }
         else addToast('Thêm thất bại', 'error');
       } else {
-        const r = await api.createVisitPlans({ ...plan, sites, user: data.user.id });
-        if (r.success) { setPlans((p) => [...p, ...r.data]); closeModal(); addToast(`Đã thêm ${r.data.length} kế hoạch`); }
+        const r = await api.createVisitPlans({ ...plan, sites, user: data.user.id, chuc_vu: 'ANCS' });
+        if (r.success) { setPlans((p) => [...p, ...r.data.map(withType)]); closeModal(); addToast(`Đã thêm ${r.data.length} kế hoạch`); }
         else addToast('Thêm thất bại', 'error');
       }
     } catch { addToast('Lỗi kết nối, thử lại sau', 'error'); }
@@ -151,6 +170,22 @@ const VisitPlanManager = () => {
             <label className="block text-xs font-medium text-gray-500 mb-1">Trạng thái</label>
             <input name="status" value={searchQuery.status} onChange={handleSearchChange} placeholder="Tìm theo trạng thái..." className={INPUT} />
           </div>
+          <div className="flex-1 sm:flex-none sm:w-36 min-w-[120px]">
+            <label className="block text-xs font-medium text-gray-500 mb-1">Chức vụ</label>
+            <select name="chucVu" value={searchQuery.chucVu} onChange={handleSearchChange} className={`${INPUT} w-full bg-white`}>
+              <option value="">Tất cả</option>
+              <option value="ANCS">ANCS</option>
+              <option value="KSTT">KSTT</option>
+            </select>
+          </div>
+          <div className="flex-1 sm:flex-none sm:w-36 min-w-[120px]">
+            <label className="block text-xs font-medium text-gray-500 mb-1">Loại CH</label>
+            <select name="loaiCh" value={searchQuery.loaiCh} onChange={handleSearchChange} className={`${INPUT} w-full bg-white`}>
+              <option value="">Tất cả</option>
+              <option value="Siêu thị">Siêu thị</option>
+              <option value="Cửa hàng">Cửa hàng</option>
+            </select>
+          </div>
           <button onClick={resetSearch} className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 text-gray-600 text-sm rounded-lg hover:bg-gray-50 transition-colors">
             Xoá lọc
           </button>
@@ -189,6 +224,8 @@ const VisitPlanManager = () => {
                   <tr key={plan.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">{toDateInputValue(plan.date)}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 font-medium">{plan.site}</td>
+                    <td className="px-4 py-3"><ChucVuTag v={plan.chuc_vu} /></td>
+                    <td className="px-4 py-3"><LoaiTag plan={plan} /></td>
                     <td className="px-4 py-3 text-sm text-gray-600 max-w-xs truncate">{plan.path}</td>
                     <td className="px-4 py-3"><StatusBadge status={plan.status} /></td>
                     <td className="px-4 py-3 text-center">
@@ -215,7 +252,9 @@ const VisitPlanManager = () => {
                     <Eye className="w-4 h-4" />
                   </button>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <ChucVuTag v={plan.chuc_vu} />
+                  <LoaiTag plan={plan} />
                   <StatusBadge status={plan.status} />
                   <span className="text-xs text-gray-400">{toDateInputValue(plan.date)}</span>
                 </div>
