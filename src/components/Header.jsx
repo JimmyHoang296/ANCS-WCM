@@ -6,6 +6,7 @@ import useStore from '../store/useStore';
 const PAGE_TITLES = {
   '/search':                'Tìm kiếm',
   '/checklist':             'Checklist ANCS',
+  '/summary':               'Tổng hợp checklist',
   '/admin':                 'Quản trị tài khoản',
   '/visit-plan-management': 'Đăng ký lấy dữ liệu',
 };

@@ -1,4 +1,4 @@
-import { ChevronLeft, ClipboardCheck, Menu, Search, Settings, Store, User } from "lucide-react";
+import { BarChart2, ChevronLeft, ClipboardCheck, Menu, Search, Settings, Store, User } from "lucide-react";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import useStore from "../store/useStore";
@@ -6,6 +6,7 @@ import useStore from "../store/useStore";
 const baseNavItems = [
   { name: "Tìm kiếm", icon: <Search size={20} />, page: "/search" },
   { name: "Checklist ANCS", icon: <ClipboardCheck size={20} />, page: "/checklist" },
+  { name: "Tổng hợp checklist", icon: <BarChart2 size={20} />, page: "/summary" },
   { name: "Đăng ký lấy dữ liệu", icon: <Store size={20} />, page: "/visit-plan-management" },
 ];
 
