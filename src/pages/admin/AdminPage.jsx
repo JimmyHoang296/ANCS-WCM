@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { KeyRound, Plus, UserCheck, UserX } from "lucide-react";
+import { KeyRound, Plus, Upload, UserCheck, UserX } from "lucide-react";
 import { TITLES, createUser, listUsers, resetPassword, updateUser } from "../../api/ancsUsers";
+import { nvttApi, parseNvttFile } from "../../api/nvtt";
 import useStore from "../../store/useStore";
 import LoadingModal from "../../components/LoadingModal";
 
@@ -29,6 +30,34 @@ const AdminPage = () => {
   }, [addToast]);
 
   useEffect(() => { load(); }, [load]);
+
+  // ---- Danh sách nhân viên thu tiền (chỉ trưởng phòng) ----
+  const [nvttInfo, setNvttInfo] = useState(null);
+  const loadNvttInfo = useCallback(async () => {
+    const r = await nvttApi.info();
+    if (r.success) setNvttInfo(r);
+  }, []);
+  useEffect(() => { if (isTruongPhong) loadNvttInfo(); }, [isTruongPhong, loadNvttInfo]);
+
+  const handleNvttUpload = async (e) => {
+    const file = e.target.files[0];
+    e.target.value = "";
+    if (!file) return;
+    setLoading(true);
+    try {
+      const rows = await parseNvttFile(file);
+      if (!rows.length) { addToast("File không có dòng dữ liệu nào", "error"); return; }
+      const current = nvttInfo?.count ? ` Danh sách hiện tại (${nvttInfo.count} người) sẽ bị thay thế.` : "";
+      if (!window.confirm(`Đọc được ${rows.length} nhân viên từ file.${current} Tiếp tục?`)) return;
+      const r = await nvttApi.replaceAll(rows, me.id);
+      if (r.success) { addToast(`Đã cập nhật ${r.count} nhân viên thu tiền`); loadNvttInfo(); }
+      else addToast(r.message || "Upload thất bại", "error");
+    } catch (err) {
+      addToast(err.message || "Không đọc được file", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Trưởng phòng quản lý tất cả; trưởng bộ phận chỉ quản lý chuyên viên của mình.
   const canManage = (u) =>
@@ -115,6 +144,26 @@ const AdminPage = () => {
           <Plus size={16} /> Tạo tài khoản
         </button>
       </form>
+
+      {isTruongPhong && (
+        <div className="bg-white rounded-xl shadow-sm p-4 space-y-3">
+          <h2 className="text-base font-semibold text-gray-700">Danh sách nhân viên thu tiền</h2>
+          <p className="text-sm text-gray-500">
+            {nvttInfo
+              ? nvttInfo.count
+                ? <>Hiện có <b>{nvttInfo.count}</b> nhân viên, cập nhật {new Date(nvttInfo.last.uploaded_at).toLocaleString("vi-VN", { timeZone: "Asia/Bangkok", dateStyle: "short", timeStyle: "short" })}{nvttInfo.last.uploaded_by ? ` bởi ${nvttInfo.last.uploaded_by}` : ""}.</>
+                : "Chưa có dữ liệu."
+              : "Đang tải..."}
+          </p>
+          <label className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-4 py-3 sm:py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors cursor-pointer">
+            <Upload size={16} /> Upload file Excel
+            <input type="file" accept=".xlsx,.xls" hidden onChange={handleNvttUpload} />
+          </label>
+          <p className="text-xs text-gray-400">
+            Đọc sheet đầu tiên, nhận cột theo tên: Họ và tên, Họ tên / SĐT / Địa chỉ thường trú người bảo lãnh, Chức danh CBLĐ, Cấp bậc CBLĐ / CMND, Mối quan hệ, Trích ngang chi tiết NVTT, ANCS quản lý. Upload sẽ thay toàn bộ danh sách cũ.
+          </p>
+        </div>
+      )}
 
       <div className="hidden md:block bg-white rounded-xl shadow-sm overflow-x-auto">
         <table className="min-w-full text-sm">
